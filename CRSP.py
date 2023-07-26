@@ -1,11 +1,10 @@
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import wrds
 
 
 file_path = '/Users/zequnli/LocalData/'
-start_date = '1957-01-01'
+start_date = '1963-07-01'
 end_date = '2021-12-31'
 
 
@@ -54,5 +53,13 @@ crsp = crsp[['permno', 'yyyymm', 'retadj', 'me']]
 # change the data type of permno and yyyymm to int
 crsp['permno'] = crsp['permno'].astype(int)
 crsp['yyyymm'] = crsp['yyyymm'].astype(int)
+
+
+# merge crsp with fama-french risk free rate
+ff = pd.read_csv(file_path + 'ff.csv', index_col=0)
+rf_dict = ff['RF'].to_dict()
+crsp['rf'] = crsp['yyyymm'].map(rf_dict)
+crsp['exret'] = crsp['retadj'] - crsp['rf']
+
 
 crsp.to_csv(file_path + 'crsp.csv', index=False)
