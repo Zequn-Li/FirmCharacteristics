@@ -9,7 +9,7 @@ end_date = '2021-12-31'
 
 
 db = wrds.Connection(wrds_username='zli61')
-query = ("select a.permno, a.date, a.ret, a.shrout, a.prc, b.exchcd,c.dlstcd, c.dlret from crsp.msf as a left join crsp.msenames as b on a.permno=b.permno and b.namedt<=a.date and a.date<=b.nameendt left join crsp.msedelist as c on a.permno=c.permno and date_trunc('month', a.date) = date_trunc('month', c.dlstdt)where date>= '{0}' and date <= '{1}'").format(start_date, end_date)
+query = ("select a.permno, a.date, a.ret, a.shrout, a.prc, b.siccd, b.exchcd, b.shrcd, c.dlstcd, c.dlret from crsp.msf as a left join crsp.msenames as b on a.permno=b.permno and b.namedt<=a.date and a.date<=b.nameendt left join crsp.msedelist as c on a.permno=c.permno and date_trunc('month', a.date) = date_trunc('month', c.dlstdt)where date>= '{0}' and date <= '{1}'").format(start_date, end_date)
 crsp = db.raw_sql(query, date_cols=['date'])
 crsp.head()
 
@@ -49,7 +49,7 @@ crsp = crsp[crsp['me'] != 0]
 crsp = crsp[crsp['me'].notna()]
 crsp = crsp[crsp['retadj'].notna()]
 
-crsp = crsp[['permno', 'yyyymm', 'retadj', 'me']]
+crsp = crsp[['permno', 'yyyymm', 'retadj', 'me', 'shrcd','prc','siccd', 'exchcd']]
 # change the data type of permno and yyyymm to int
 crsp['permno'] = crsp['permno'].astype(int)
 crsp['yyyymm'] = crsp['yyyymm'].astype(int)
